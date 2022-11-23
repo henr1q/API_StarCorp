@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "MzATk9L9lew/FKnZgwgqyMjklcpJBQGJ44sc9in4YPcHSb6tb+k/QnH14l1VFdbwRayQr/4rEZxJmNctldLQ5w==",
+  "dgSpecHash": "DZnPBOMhkTmcdBEoF6tTjLrahCgqkwpwq7nox/f+GmQSGttd6FIMiodoylop2/ddtxOmtCCntv7wIIfqK/BrGw==",
   "success": true,
   "projectFilePath": "C:\\Users\\pablo\\OneDrive\\Documentos\\scripts\\C#\\StarCorp\\StarCorp\\StarCorp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\pablo\\.nuget\\packages\\dapper\\2.0.123\\dapper.2.0.123.nupkg.sha512",
+    "C:\\Users\\pablo\\.nuget\\packages\\erroror\\1.2.0\\erroror.1.2.0.nupkg.sha512",
     "C:\\Users\\pablo\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
     "C:\\Users\\pablo\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "C:\\Users\\pablo\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",

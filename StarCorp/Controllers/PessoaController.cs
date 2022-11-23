@@ -5,46 +5,25 @@ using Microsoft.AspNetCore.Mvc;
 using StarCorp.Contracts;
 using StarCorp.Models;
 using StarCorp.Services.Pessoas;
+using ErrorOr;
 
 namespace StarCorp.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class PessoaController : ControllerBase
+
+public class PessoaController : ApiController
 {
-    public readonly IPessoaService _PessoaService;
+    public readonly IPessoaService _pessoaService;
     
-    public readonly string FakeKey = "1234";
+    // public readonly string FakeKey = "1234";
     public PessoaController(IPessoaService PessoaService)
     {
-        _PessoaService = PessoaService;
+        _pessoaService = PessoaService;
     }
 
     [HttpPost]
     public IActionResult CreatePessoa(CreatePessoaRequest request)
-    {   
-        List<string> errors = new List<string>();
-        bool failure = false;
-        int? data;
-        string code = "200";
-
-        if(request.idade < 0 || request.idade > 130)
-        {
-            errors.Add("O valor para Idade deve ser entre 0 e 130");
-            failure = true;
-            code = "400";
-        }
-
-        bool isEmailValid = _PessoaService.EmailValidate(request.email);
-
-        if(isEmailValid == false)
-        {
-            errors.Add("The Email field is not a valid e-mail address.");
-            failure = true;
-            code = "400";
-        }
-        
-        var Pessoa = new Pessoa
+    {    
+        ErrorOr<Pessoa> requestPessoaResult = Pessoa.Create
         (
             request.nome,
             request.dataNascimento,
@@ -56,113 +35,89 @@ public class PessoaController : ControllerBase
             DateTime.UtcNow
         );
 
-        if(errors.Count >= 1)
+        if (requestPessoaResult.IsError)
         {
-            data = null;
-        }
-        else
-        {
-            data = _PessoaService.CreatePessoa(Pessoa);
+            return StatusCode(requestPessoaResult.Errors);
         }
 
-        var response = new DataPessoaResponse
-        (
-            Guid.NewGuid(),
-            failure, 
-            data,
-            errors,
-            code,
-            DateTime.Now
-        );
-
-        return StatusCode(Int32.Parse(response.code), response);
+        ErrorOr<int> createPessoaResult = _pessoaService.CreatePessoa(requestPessoaResult.Value);
+        
+        return createPessoaResult.Match(
+            data => Ok(MapPessoaResponse(data)),
+            errors => StatusCode(errors));
     }
-
+    
     [HttpGet("GetAll")]
     public IActionResult GetAll()
     {
-        var API_KEY = Request.Headers["API_KEY"];
+        ErrorOr<List<Pessoa>> GetAllResult = _pessoaService.GetAllPessoa();
 
-        if (API_KEY != FakeKey)
-        {
-            return StatusCode(404, "WROOOONG");
-        }
-
-        var data = _PessoaService.GetAllPessoa();
-        List<string> errors = new List<string>();
-        string code = "200";
-
-        var response = new DataPessoaResponse
-        (
-            Guid.NewGuid(),
-            false, 
-            data,
-            errors,
-            code,
-            DateTime.Now
-        );
-
-        return StatusCode(Int32.Parse(response.code), response);
+        return GetAllResult.Match(
+            data => Ok(MapPessoaResponse(data)),
+            errors => StatusCode(errors));
     }
 
     [HttpGet("{id}")]
     public IActionResult GetPessoa(int id)
     {
-        var data = _PessoaService.GetPessoaById(id);
-        List<string> errors = new List<string>();
-        string code = "200";
+        List<Error> errors = new List<Error>();   
+        ErrorOr<Pessoa> getPessoaResult = _pessoaService.GetPessoaById(id);
 
-        var response = new DataPessoaResponse
-        (
-            Guid.NewGuid(),
-            false, 
-            data,
-            errors,
-            code,
-            DateTime.Now
-        );
-
-        return StatusCode(Int32.Parse(response.code), response);
+        return getPessoaResult.Match(
+            data => Ok(MapPessoaResponse(data)),
+            errors => StatusCode(errors));
     }
 
     [HttpPut("{id}")]
     public IActionResult EditPessoa(int id, UpdatePessoaRequest request)
     {
-        var data = _PessoaService.EditPessoa(id, request);
-        List<string> errors = new List<string>();
-        string code = "200";
-
-        var response = new DataPessoaResponse
+        ErrorOr<Pessoa> requestPessoaResult = Pessoa.Create
         (
-            Guid.NewGuid(),
-            false, 
-            data,
-            errors,
-            code,
-            DateTime.Now
+            request.nome,
+            request.dataNascimento,
+            request.idade,
+            request.email,
+            request.telefone,
+            request.celular,
+            DateTime.UtcNow,
+            DateTime.UtcNow
         );
 
-        return StatusCode(Int32.Parse(response.code), response);
+        if (requestPessoaResult.IsError)
+        {
+            return StatusCode(requestPessoaResult.Errors);
+        }
+
+        ErrorOr<int> editPessoaResult = _pessoaService.EditPessoa(id, request);
+
+        return editPessoaResult.Match(
+            data => Ok(MapPessoaResponse(data)),
+            errors => StatusCode(errors));
+        
     }
 
     [HttpDelete("{id}")]
     public IActionResult DeletePessoa(int id)
     {
-        var data = _PessoaService.DeletePessoa(id);
+        List<Error> errors = new List<Error>();   
+        ErrorOr<int> getPessoaResult = _pessoaService.DeletePessoa(id);
 
+        return getPessoaResult.Match(
+            data => Accepted(MapPessoaResponse(data)),
+            errors => StatusCode(errors));
+    }
+
+    private static DataPessoaResponse MapPessoaResponse(Object data)
+    {
         List<string> errors = new List<string>();
-        string code = "200";
-
-        var response = new DataPessoaResponse
-        (
-            Guid.NewGuid(),
-            false, 
-            data,
-            errors,
-            code,
-            DateTime.Now
-        );
-
-        return StatusCode(Int32.Parse(response.code), response);
+        return new DataPessoaResponse
+                (
+                    Guid.NewGuid(),
+                    false,
+                    data,
+                    errors,
+                    "200",
+                    DateTime.Now
+                );
     }
 }

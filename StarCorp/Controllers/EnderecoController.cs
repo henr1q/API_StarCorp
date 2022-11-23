@@ -4,30 +4,24 @@ using Microsoft.AspNetCore.Mvc;
 using StarCorp.Contracts;
 using StarCorp.Models;
 using StarCorp.Services.Enderecos;
+using ErrorOr;
 
 namespace StarCorp.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-
-public class EnderecoController : ControllerBase{
+public class EnderecoController : ApiController
+{
 
     public readonly IEnderecoService _enderecoService;
     
-    public EnderecoController(IEnderecoService enderecoService)
+    public EnderecoController(IEnderecoService EnderecoService)
     {
-        _enderecoService = enderecoService;
+        _enderecoService = EnderecoService;
     }
 
     [HttpPost]
     public IActionResult CreateEndereco(CreateEnderecoRequest request)
     {   
-        // List<string> errors = new List<string>();
-        // bool failure = false;
-        // int? data;
-        // string code = "200";
-
-        var endereco = new Endereco
+        ErrorOr<Endereco> requestEnderecoResult = Endereco.Create
         (
             request.pessoaId,
             request.logradouro,
@@ -39,109 +33,86 @@ public class EnderecoController : ControllerBase{
             DateTime.UtcNow
         );
 
-        // data = _enderecoService.CreateEndereco(endereco);
-        
-        // if (data == 3)
-        // {
-        //     errors.Add("PessoaId não existe na tabela de Pessoas.");
-        //     failure = true;
-        //     code = "400";
-        //     data = null;
-        // }
+        if (requestEnderecoResult.IsError)
+        {
+            return StatusCode(requestEnderecoResult.Errors);
+        }
 
-        // var response = new DataEnderecoResponse
-        // (
-        //     Guid.NewGuid(),
-        //     failure, 
-        //     data,
-        //     errors,
-        //     code,
-        //     DateTime.Now
-        // );
-
-        DataEnderecoResponse data = _enderecoService.CreateEndereco(endereco);
+        ErrorOr<int> createEnderecoResult = _enderecoService.CreateEndereco(requestEnderecoResult.Value);
         
-        return StatusCode(Int32.Parse(data.code), data);
+        return createEnderecoResult.Match(
+            data => Ok(MapEnderecoResponse(data)),
+            errors => StatusCode(errors));
     }
 
     [HttpGet("GetAll/{pessoaId}")]
     public IActionResult GetAll(int pessoaId)
     {
-        var data = _enderecoService.GetAllEndereco(pessoaId);
-        List<string> errors = new List<string>();
-        string code = "200";
-
-        var response = new DataEnderecoResponse
-        (
-            Guid.NewGuid(),
-            false, 
-            data,
-            errors,
-            code,
-            DateTime.Now
-        );
-
-        return StatusCode(Int32.Parse(response.code), response);
+        List<Error> errors = new List<Error>(); 
+        ErrorOr<List<Endereco>> getEnderecoResult = _enderecoService.GetAllEndereco(pessoaId);
+        
+        return getEnderecoResult.Match(
+            data => Ok(MapEnderecoResponse(data)),
+            errors => StatusCode(errors));
     }
 
     [HttpGet("{id}")]
     public IActionResult GetEndereco(int id)
     {
-        var data = _enderecoService.GetEnderecoById(id);
-        List<string> errors = new List<string>();
-        string code = "200";
+        List<Error> errors = new List<Error>();   
+        ErrorOr<Endereco> getEnderecoResult = _enderecoService.GetEnderecoById(id);
 
-        var response = new DataEnderecoResponse
-        (
-            Guid.NewGuid(),
-            false, 
-            data,
-            errors,
-            code,
-            DateTime.Now
-        );
-
-        return StatusCode(Int32.Parse(response.code), response);
+        return getEnderecoResult.Match(
+            data => Ok(MapEnderecoResponse(data)),
+            errors => StatusCode(errors));
     }
 
     [HttpPut("{id}")]
     public IActionResult EditEndereco(int id, UpdateEnderecoRequest request)
     {
-        var data = _enderecoService.EditEndereco(id, request);
-        List<string> errors = new List<string>();
-        string code = "200";
-
-        var response = new DataEnderecoResponse
+        ErrorOr<Endereco> requestEnderecoResult = Endereco.Edit
         (
-            Guid.NewGuid(),
-            false, 
-            data,
-            errors,
-            code,
-            DateTime.Now
+            request.logradouro,
+            request.numero,
+            request.bairro,
+            request.cidade,
+            request.uf
         );
 
-        return StatusCode(Int32.Parse(response.code), response);
+        if (requestEnderecoResult.IsError)
+        {
+            return StatusCode(requestEnderecoResult.Errors);
+        }
+
+        ErrorOr<int> editEnderecoResult = _enderecoService.EditEndereco(id, request);
+
+        return editEnderecoResult.Match(
+            data => Ok(MapEnderecoResponse(data)),
+            errors => StatusCode(errors));
     }
 
     [HttpDelete("{id}")]
     public IActionResult DeleteEndereco(int id)
     {
-        var data = _enderecoService.DeleteEndereco(id);
+        List<Error> errors = new List<Error>();   
+        ErrorOr<int> getEnderecoResult = _enderecoService.DeleteEndereco(id);
 
+        return getEnderecoResult.Match(
+            data => Accepted(MapEnderecoResponse(data)),
+            errors => StatusCode(errors));
+    }
+
+    private static DataEnderecoResponse MapEnderecoResponse(Object data)
+    {
         List<string> errors = new List<string>();
-        string code = "200";
-
-        var response = new DataEnderecoResponse
-        (
-            Guid.NewGuid(),
-            false, 
-            data,
-            errors,
-            code,
-            DateTime.Now
-        );
-
-        return StatusCode(Int32.Parse(response.code), response);
+        return new DataEnderecoResponse
+                (
+                    Guid.NewGuid(),
+                    false,
+                    data,
+                    errors,
+                    "200",
+                    DateTime.Now
+                );
     }
 }

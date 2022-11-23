@@ -6,9 +6,9 @@ namespace StarCorp.Repository;
 
 public interface IEnderecoRepository
 {
-    public List<Endereco> GetEnderecos(int _pessoaId);
+    public List<Endereco> GetAllEndereco(int _pessoaId);
 
-    public EnderecoValidate CreateEndereco(Endereco endereco);
+    public int CreateEndereco(Endereco endereco);
 
     public Endereco GetEnderecoById(int id);
 

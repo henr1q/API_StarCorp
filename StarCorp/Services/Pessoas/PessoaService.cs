@@ -1,8 +1,11 @@
+using System.Data.SqlTypes;
 using StarCorp.Models;
 using StarCorp.Services.Pessoas;
 using StarCorp.Contracts;
 using StarCorp.Repository;
 using System.Text.RegularExpressions;
+using ErrorOr;
+using System.Data.SqlClient;
 
 public class PessoaService : IPessoaService
 {
@@ -12,43 +15,58 @@ public class PessoaService : IPessoaService
     {
         _pessoaRepository = pessoaRepository;
     }
-    public int CreatePessoa(Pessoa pessoa)
+
+    public ErrorOr<int> CreatePessoa(Pessoa pessoa)
     {
-        var data = _pessoaRepository.CreatePessoa(pessoa);
-
-        return data;
+        try
+        {
+            var data = _pessoaRepository.CreatePessoa(pessoa);
+            return data;
+        }
+        catch(Exception Ex)
+        {
+            return ErrorsPessoa.Pessoa.NotFound;
+        }
     }
-    public bool EmailValidate(string email)
-    { 
-        string regex = @"^[^@\s]+@[^@\s]+\.(com|net|org|gov)$";
-        return Regex.IsMatch(email, regex, RegexOptions.IgnoreCase);
-    }
 
-    public int DeletePessoa(int id)
+    public ErrorOr<int> DeletePessoa(int id)
     {
-        var data = _pessoaRepository.DeletePessoa(id);
-
-        return data;
+        try
+        {
+            var data = _pessoaRepository.DeletePessoa(id);
+            return data;
+        }
+        catch(SqlException)
+        {
+            return ErrorsPessoa.Pessoa.ChildElement;
+        }
+        
     }
 
-    public int EditPessoa(int id, UpdatePessoaRequest request)
+    public ErrorOr<int> EditPessoa(int id, UpdatePessoaRequest request)
     {
         var data = _pessoaRepository.EditPessoa(id, request);
 
         return data;
     }
 
-    public List<Pessoa> GetAllPessoa()
+    public ErrorOr<List<Pessoa>> GetAllPessoa()
     {
         var data = _pessoaRepository.GetPessoas();
 
         return data;
     }
 
-    public Pessoa GetPessoaById(int id)
+    public ErrorOr<Pessoa> GetPessoaById(int id)
     {
-        var data = _pessoaRepository.GetPessoaById(id);
-
-        return data;
+        try
+        {
+            var data = _pessoaRepository.GetPessoaById(id);
+            return data;
+        }
+        catch
+        {
+            return ErrorsPessoa.Pessoa.NotFound;
+        }   
     }
 }

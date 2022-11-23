@@ -1,3 +1,5 @@
+using ErrorOr;
+
 namespace StarCorp.Models;
 
 public class Endereco 
@@ -27,4 +29,66 @@ public class Endereco
     public Endereco()
     {
     }
+
+    public Endereco(string logradouro, string numero, string bairro, string cidade, string uf)
+    {
+        Logradouro = logradouro;
+        Numero = numero;
+        Bairro = bairro;
+        Cidade = cidade;
+        UF = uf;
+    }
+
+    public static ErrorOr<Endereco> Create(int pessoaId, string logradouro, string numero, string bairro, string cidade, string uf, DateTime cadastro, DateTime alteracao)
+    {
+        List<Error> errors = new ();
+
+        if (uf.Length > 2)
+        {
+            errors.Add(ErrorsEndereco.Endereco.UfInvalid);
+        }
+
+        if (errors.Count >= 1)
+        {
+            return errors;
+        }
+
+        return new Endereco
+        (
+            pessoaId,
+            logradouro,
+            numero,
+            bairro,
+            cidade,
+            uf,
+            cadastro,
+            alteracao
+        );
+    }
+
+    public static ErrorOr<Endereco> Edit(string logradouro, string numero, string bairro, string cidade, string uf)
+    {
+        List<Error> errors = new ();
+
+        if (uf.Length > 2)
+        {
+            errors.Add(ErrorsEndereco.Endereco.UfInvalid);
+        }
+
+        if (errors.Count >= 1)
+        {
+            return errors;
+        }
+
+        return new Endereco
+        (
+            logradouro,
+            numero,
+            bairro,
+            cidade,
+            uf
+        );
+    }
+
+
 }

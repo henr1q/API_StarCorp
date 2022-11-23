@@ -72,14 +72,7 @@ namespace StarCorp.Repository
 
             using (_connection)
             {
-                try
-                {
-                    pessoaData = _connection.QuerySingle<Pessoa>(query, paramaters);
-                }
-                catch 
-                {
-                    pessoaData = null;
-                }
+                pessoaData = _connection.QuerySingle<Pessoa>(query, paramaters);
             }
 
             return pessoaData;

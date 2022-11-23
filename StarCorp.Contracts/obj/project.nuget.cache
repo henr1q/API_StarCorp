@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "L60e2MnnMkLO6lCtOKpReZW0vNVwG+TVwsG8A7wYuTx9/4dcGo+UO/KDSkF70K5Iv+/gOFhojroRY0EAZOd5Lg==",
+  "dgSpecHash": "nGrkerYnPLcXgkgM0gw0Wps1BsFRoX+jRiuGHFrDbi5ZeCe9oAoBFUZv/mZQ8Rgioy4pgkHFD1BKbWUCNOQrsQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\pablo\\OneDrive\\Documentos\\scripts\\C#\\StarCorp\\StarCorp.Contracts\\StarCorp.contracts.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\pablo\\.nuget\\packages\\erroror\\1.2.0\\erroror.1.2.0.nupkg.sha512"
+  ],
   "logs": []
 }

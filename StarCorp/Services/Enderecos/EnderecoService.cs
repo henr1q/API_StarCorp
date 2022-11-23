@@ -5,6 +5,8 @@ using StarCorp.Contracts;
 using StarCorp.Models;
 using StarCorp.Repository;
 using StarCorp.Services.Enderecos;
+using ErrorOr;
+using System.Data.SqlClient;
 
 public class EnderecoService : IEnderecoService
 {   
@@ -15,61 +17,52 @@ public class EnderecoService : IEnderecoService
         _enderecoRepository = enderecoRepository;
     }
 
-    public DataEnderecoResponse CreateEndereco(Endereco endereco)
+    public ErrorOr<int> CreateEndereco(Endereco endereco)
     {
-        EnderecoValidate data = new(null, new List<string>());
-        // List<string> errors = new List<string>();
-        bool failure = false;
-        string code = "200";
-
-        if(endereco.UF.Length > 2)
+        try
         {
-            data.errors.Add("O valor para UF deve ser até 2 caracteres.");
-            failure = true;
-            code = "400";
+            var data = _enderecoRepository.CreateEndereco(endereco);
+            return data;
         }
-
-        data = _enderecoRepository.CreateEndereco(endereco);
-
-        if (data.errors.Count >= 1)
+        catch(Exception Ex)
         {
-            failure = true;
-            code = "400";
+            return ErrorsEndereco.Endereco.NotFound;
         }
-        
-        var response = new DataEnderecoResponse
-        (
-            Guid.NewGuid(),
-            failure, 
-            data.data,
-            data.errors,
-            code,
-            DateTime.Now
-        );
-
-        return response;
     }
 
-    public List<Endereco> GetAllEndereco(int pessoaId)
+    public ErrorOr<List<Endereco>> GetAllEndereco(int pessoaId)
     {
-        var data = _enderecoRepository.GetEnderecos(pessoaId);
+        var data = _enderecoRepository.GetAllEndereco(pessoaId);
         return data;
     }
 
-    public Endereco GetEnderecoById(int id)
+    public ErrorOr<Endereco> GetEnderecoById(int id)
     {
-        
-        var data = _enderecoRepository.GetEnderecoById(id);       
-        return data;
+        try
+        {
+            var data = _enderecoRepository.GetEnderecoById(id);
+            return data;
+        }
+        catch
+        {
+            return ErrorsEndereco.Endereco.NotFound;
+        }   
     }
 
-    public int DeleteEndereco(int id)
+    public ErrorOr<int> DeleteEndereco(int id)
     {
-        var data = _enderecoRepository.DeleteEndereco(id);
-        return data;
+        try
+        {
+            var data = _enderecoRepository.DeleteEndereco(id);
+            return data;
+        }
+        catch(SqlException)
+        {
+            return ErrorsEndereco.Endereco.FailDelete;
+        }
     }
 
-    public int EditEndereco(int id, UpdateEnderecoRequest request)
+    public ErrorOr<int> EditEndereco(int id, UpdateEnderecoRequest request)
     {
         var data = _enderecoRepository.EditEndereco(id, request);
         return data;

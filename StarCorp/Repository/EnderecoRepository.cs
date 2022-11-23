@@ -18,7 +18,7 @@ namespace StarCorp.Repository
             _connection = new SqlFactory().SqlConnection();
         }
 
-        public List<Endereco> GetEnderecos(int _pessoaId)
+        public List<Endereco> GetAllEndereco(int _pessoaId)
         {   
             List<Endereco> enderecoData = new List<Endereco>();
             var query = @"SELECT * FROM [StarCorp].[dbo].[enderecos] 
@@ -38,7 +38,7 @@ namespace StarCorp.Repository
             return enderecoData;
         }
 
-        public EnderecoValidate CreateEndereco(Endereco endereco)
+        public int CreateEndereco(Endereco endereco)
         {
             int result = 0;
             List<string> errors = new List<string>();
@@ -72,16 +72,10 @@ namespace StarCorp.Repository
                 }
             }
 
-            EnderecoValidate response = new
-            (
-                result,
-                errors
-            );
-
-            return response;
+            return result;
         } 
 
-        public Endereco  GetEnderecoById(int id)
+        public Endereco GetEnderecoById(int id)
         {
             Endereco enderecoData = new Endereco();
 
@@ -95,14 +89,7 @@ namespace StarCorp.Repository
 
             using (_connection)
             {
-                try
-                {
-                    enderecoData = _connection.QuerySingle<Endereco>(query, paramaters);
-                }
-                catch 
-                {
-                    enderecoData = null;
-                }
+                enderecoData = _connection.QuerySingle<Endereco>(query, paramaters);
             }
 
             return enderecoData;
@@ -159,6 +146,3 @@ namespace StarCorp.Repository
     
     } 
 }
-
-
-//TODO ERRORS HANDLING, STATUS CODES, DATA FORMATION, PESSOAS MODEL AND CRUD :DDDDDDDDD!

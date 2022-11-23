@@ -1,3 +1,4 @@
+using ErrorOr;
 using StarCorp.Contracts;
 using StarCorp.Models;
 
@@ -5,16 +6,14 @@ namespace StarCorp.Services.Pessoas;
 
 public interface IPessoaService
 {
-    public int CreatePessoa(Pessoa Pessoa);
+    public ErrorOr<int> CreatePessoa(Pessoa Pessoa);
 
-    public List<Pessoa> GetAllPessoa();
+    public ErrorOr<List<Pessoa>> GetAllPessoa();
 
-    public Pessoa GetPessoaById(int id);
+    public ErrorOr<Pessoa> GetPessoaById(int id);
 
-    public int DeletePessoa(int id);
+    public ErrorOr<int> DeletePessoa(int id);
 
-    public int EditPessoa(int id, UpdatePessoaRequest request);
-
-    public bool EmailValidate(string email);
+    public ErrorOr<int> EditPessoa(int id, UpdatePessoaRequest request);
 
 }

@@ -1,3 +1,5 @@
+using ErrorOr;
+
 namespace StarCorp.Contracts;
 
 public record DataPessoaResponse(
