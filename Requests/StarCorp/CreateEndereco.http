@@ -1,0 +1,11 @@
+POST http://localhost:5019/api/Endereco 
+Content-Type: application/json
+
+{
+  "pessoaId": 1,
+  "logradouro": "teste1",
+  "numero": "1",
+  "bairro": "bairro_teste",
+  "cidade": "cidade_teste",
+  "uf": "TS"
+}

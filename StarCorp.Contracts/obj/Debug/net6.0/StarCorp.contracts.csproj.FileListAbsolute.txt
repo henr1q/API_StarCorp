@@ -1,0 +1,12 @@
+C:\Users\pablo\OneDrive\Documentos\scripts\C#\StarCorp\StarCorp.contracts\bin\Debug\net6.0\StarCorp.contracts.deps.json
+C:\Users\pablo\OneDrive\Documentos\scripts\C#\StarCorp\StarCorp.contracts\bin\Debug\net6.0\StarCorp.contracts.dll
+C:\Users\pablo\OneDrive\Documentos\scripts\C#\StarCorp\StarCorp.contracts\bin\Debug\net6.0\StarCorp.contracts.pdb
+C:\Users\pablo\OneDrive\Documentos\scripts\C#\StarCorp\StarCorp.contracts\obj\Debug\net6.0\StarCorp.contracts.csproj.AssemblyReference.cache
+C:\Users\pablo\OneDrive\Documentos\scripts\C#\StarCorp\StarCorp.contracts\obj\Debug\net6.0\StarCorp.contracts.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\pablo\OneDrive\Documentos\scripts\C#\StarCorp\StarCorp.contracts\obj\Debug\net6.0\StarCorp.contracts.AssemblyInfoInputs.cache
+C:\Users\pablo\OneDrive\Documentos\scripts\C#\StarCorp\StarCorp.contracts\obj\Debug\net6.0\StarCorp.contracts.AssemblyInfo.cs
+C:\Users\pablo\OneDrive\Documentos\scripts\C#\StarCorp\StarCorp.contracts\obj\Debug\net6.0\StarCorp.contracts.csproj.CoreCompileInputs.cache
+C:\Users\pablo\OneDrive\Documentos\scripts\C#\StarCorp\StarCorp.contracts\obj\Debug\net6.0\StarCorp.contracts.dll
+C:\Users\pablo\OneDrive\Documentos\scripts\C#\StarCorp\StarCorp.contracts\obj\Debug\net6.0\refint\StarCorp.contracts.dll
+C:\Users\pablo\OneDrive\Documentos\scripts\C#\StarCorp\StarCorp.contracts\obj\Debug\net6.0\StarCorp.contracts.pdb
+C:\Users\pablo\OneDrive\Documentos\scripts\C#\StarCorp\StarCorp.contracts\obj\Debug\net6.0\ref\StarCorp.contracts.dll
