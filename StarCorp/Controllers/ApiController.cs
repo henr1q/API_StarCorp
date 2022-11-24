@@ -8,6 +8,7 @@ namespace StarCorp.Controllers;
 [Route("api/[controller]")]
 public class ApiController : ControllerBase
 {
+    [NonAction]
     public IActionResult StatusCode(List<Error> errors)
     {
         var firstError = errors[0];

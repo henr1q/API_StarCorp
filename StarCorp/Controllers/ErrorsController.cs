@@ -4,8 +4,8 @@ namespace StarCorp.Controllers;
 
 public class ErrorsController : ControllerBase
 {
+    [NonAction]
     [Route("/errors")]
-
     public IActionResult Error()
     {
         return Problem();

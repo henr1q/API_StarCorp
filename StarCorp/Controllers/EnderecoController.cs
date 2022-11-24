@@ -5,6 +5,7 @@ using StarCorp.Contracts;
 using StarCorp.Models;
 using StarCorp.Services.Enderecos;
 using ErrorOr;
+using System.ComponentModel.DataAnnotations;
 
 namespace StarCorp.Controllers;
 
