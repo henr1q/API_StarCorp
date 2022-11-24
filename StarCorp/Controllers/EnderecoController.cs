@@ -12,7 +12,8 @@ public class EnderecoController : ApiController
 {
 
     public readonly IEnderecoService _enderecoService;
-    
+    public const string Fake_Key = "C29C0C2A-6125-4BA9-B0DB-B7A3A8B725BB";
+
     public EnderecoController(IEnderecoService EnderecoService)
     {
         _enderecoService = EnderecoService;
@@ -21,6 +22,15 @@ public class EnderecoController : ApiController
     [HttpPost]
     public IActionResult CreateEndereco(CreateEnderecoRequest request)
     {   
+        string API_KEY = Request.Headers["Chave"];
+        List<Error> errors = new List<Error>();
+
+        if (IsInvalidAPIKey(API_KEY))
+        {
+            errors.Add(ErrorsEndereco.Endereco.ChaveInvalida);
+            return StatusCode(errors);
+        }
+
         ErrorOr<Endereco> requestEnderecoResult = Endereco.Create
         (
             request.pessoaId,
@@ -48,7 +58,15 @@ public class EnderecoController : ApiController
     [HttpGet("GetAll/{pessoaId}")]
     public IActionResult GetAll(int pessoaId)
     {
+        string API_KEY = Request.Headers["Chave"];
         List<Error> errors = new List<Error>(); 
+       
+        if (IsInvalidAPIKey(API_KEY))
+        {
+            errors.Add(ErrorsEndereco.Endereco.ChaveInvalida);
+            return StatusCode(errors);
+        }
+
         ErrorOr<List<Endereco>> getEnderecoResult = _enderecoService.GetAllEndereco(pessoaId);
         
         return getEnderecoResult.Match(
@@ -59,7 +77,15 @@ public class EnderecoController : ApiController
     [HttpGet("{id}")]
     public IActionResult GetEndereco(int id)
     {
+        string API_KEY = Request.Headers["Chave"];
         List<Error> errors = new List<Error>();   
+        
+        if (IsInvalidAPIKey(API_KEY))
+        {
+            errors.Add(ErrorsEndereco.Endereco.ChaveInvalida);
+            return StatusCode(errors);
+        }
+
         ErrorOr<Endereco> getEnderecoResult = _enderecoService.GetEnderecoById(id);
 
         return getEnderecoResult.Match(
@@ -70,6 +96,15 @@ public class EnderecoController : ApiController
     [HttpPut("{id}")]
     public IActionResult EditEndereco(int id, UpdateEnderecoRequest request)
     {
+        string API_KEY = Request.Headers["Chave"];
+        List<Error> errors = new List<Error>();
+
+        if (IsInvalidAPIKey(API_KEY))
+        {
+            errors.Add(ErrorsEndereco.Endereco.ChaveInvalida);
+            return StatusCode(errors);
+        }
+
         ErrorOr<Endereco> requestEnderecoResult = Endereco.Edit
         (
             request.logradouro,
@@ -94,7 +129,15 @@ public class EnderecoController : ApiController
     [HttpDelete("{id}")]
     public IActionResult DeleteEndereco(int id)
     {
-        List<Error> errors = new List<Error>();   
+        string API_KEY = Request.Headers["Chave"];
+        List<Error> errors = new List<Error>();
+
+        if (IsInvalidAPIKey(API_KEY))
+        {
+            errors.Add(ErrorsEndereco.Endereco.ChaveInvalida);
+            return StatusCode(errors);
+        }
+
         ErrorOr<int> getEnderecoResult = _enderecoService.DeleteEndereco(id);
 
         return getEnderecoResult.Match(
@@ -114,5 +157,17 @@ public class EnderecoController : ApiController
                     "200",
                     DateTime.Now
                 );
+    }
+
+    private static bool IsInvalidAPIKey(string key)
+    {
+        if(key != Fake_Key)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

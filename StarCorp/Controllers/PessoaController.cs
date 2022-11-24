@@ -13,8 +13,8 @@ namespace StarCorp.Controllers;
 public class PessoaController : ApiController
 {
     public readonly IPessoaService _pessoaService;
-    
-    // public readonly string FakeKey = "1234";
+    public const string Fake_Key = "C29C0C2A-6125-4BA9-B0DB-B7A3A8B725BB";
+
     public PessoaController(IPessoaService PessoaService)
     {
         _pessoaService = PessoaService;
@@ -23,6 +23,15 @@ public class PessoaController : ApiController
     [HttpPost]
     public IActionResult CreatePessoa(CreatePessoaRequest request)
     {    
+        string API_KEY = Request.Headers["Chave"];
+        List<Error> errors = new List<Error>();
+
+        if (IsInvalidAPIKey(API_KEY))
+        {
+            errors.Add(ErrorsPessoa.Pessoa.ChaveInvalida);
+            return StatusCode(errors);
+        }
+
         ErrorOr<Pessoa> requestPessoaResult = Pessoa.Create
         (
             request.nome,
@@ -50,6 +59,15 @@ public class PessoaController : ApiController
     [HttpGet("GetAll")]
     public IActionResult GetAll()
     {
+        string API_KEY = Request.Headers["Chave"];
+        List<Error> errors = new List<Error>();
+
+        if (IsInvalidAPIKey(API_KEY))
+        {
+            errors.Add(ErrorsPessoa.Pessoa.ChaveInvalida);
+            return StatusCode(errors);
+        }
+
         ErrorOr<List<Pessoa>> GetAllResult = _pessoaService.GetAllPessoa();
 
         return GetAllResult.Match(
@@ -60,7 +78,15 @@ public class PessoaController : ApiController
     [HttpGet("{id}")]
     public IActionResult GetPessoa(int id)
     {
-        List<Error> errors = new List<Error>();   
+        string API_KEY = Request.Headers["Chave"];
+        List<Error> errors = new List<Error>();
+
+        if (IsInvalidAPIKey(API_KEY))
+        {
+            errors.Add(ErrorsPessoa.Pessoa.ChaveInvalida);
+            return StatusCode(errors);
+        }
+
         ErrorOr<Pessoa> getPessoaResult = _pessoaService.GetPessoaById(id);
 
         return getPessoaResult.Match(
@@ -71,6 +97,15 @@ public class PessoaController : ApiController
     [HttpPut("{id}")]
     public IActionResult EditPessoa(int id, UpdatePessoaRequest request)
     {
+        string API_KEY = Request.Headers["Chave"];
+        List<Error> errors = new List<Error>();
+
+        if (IsInvalidAPIKey(API_KEY))
+        {
+            errors.Add(ErrorsPessoa.Pessoa.ChaveInvalida);
+            return StatusCode(errors);
+        }
+
         ErrorOr<Pessoa> requestPessoaResult = Pessoa.Create
         (
             request.nome,
@@ -99,7 +134,15 @@ public class PessoaController : ApiController
     [HttpDelete("{id}")]
     public IActionResult DeletePessoa(int id)
     {
-        List<Error> errors = new List<Error>();   
+        string API_KEY = Request.Headers["Chave"];
+        List<Error> errors = new List<Error>();
+
+        if (IsInvalidAPIKey(API_KEY))
+        {
+            errors.Add(ErrorsPessoa.Pessoa.ChaveInvalida);
+            return StatusCode(errors);
+        }
+  
         ErrorOr<int> getPessoaResult = _pessoaService.DeletePessoa(id);
 
         return getPessoaResult.Match(
@@ -119,5 +162,17 @@ public class PessoaController : ApiController
                     "200",
                     DateTime.Now
                 );
+    }
+
+    private static bool IsInvalidAPIKey(string key)
+    {
+        if(key != Fake_Key)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
